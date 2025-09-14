@@ -1,9 +1,26 @@
 # 🔐 Face ID Login System
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flask-2.3.3-green.svg)](https://flask.palletsprojects.com/)
-[![OpenCV](https://img.shields.io/badge/OpenCV-4.8.1-red.svg)](https://opencv.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<div align="center">
+
+[![Python](https://img.shields.io/badge/Python-3.8+-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-2.3.3-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.8.1-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+<br>
+
+![Stars](https://img.shields.io/github/stars/Gobinda988888/facelogin?style=social)
+![Forks](https://img.shields.io/github/forks/Gobinda988888/facelogin?style=social)
+![Issues](https://img.shields.io/github/issues/Gobinda988888/facelogin?style=social)
+
+</div>
+
+<div align="center">
+  <h3>🚀 Advanced Face Recognition Authentication System</h3>
+  <p><em>Secure, Fast, and Modern Face ID Login with Real-time Detection</em></p>
+</div>
+
+---
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/Gobinda988888/facelogin/main/demo.gif" alt="Face ID Login Demo" width="600">
