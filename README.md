@@ -9,6 +9,43 @@
   <img src="https://raw.githubusercontent.com/Gobinda988888/facelogin/main/demo.gif" alt="Face ID Login Demo" width="600">
 </div>
 
+## 📸 Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <img src="screenshots/home-page.png" alt="Home Page" width="300"><br>
+        <strong>🏠 Home Page</strong>
+      </td>
+      <td align="center">
+        <img src="screenshots/register-page.png" alt="Registration" width="300"><br>
+        <strong>📝 Registration</strong>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="screenshots/face-detection.png" alt="Face Detection" width="300"><br>
+        <strong>🎯 Face Detection</strong>
+      </td>
+      <td align="center">
+        <img src="screenshots/login-page.png" alt="Login Page" width="300"><br>
+        <strong>🔐 Login Page</strong>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="screenshots/dashboard.png" alt="Dashboard" width="300"><br>
+        <strong>📊 Dashboard</strong>
+      </td>
+      <td align="center">
+        <img src="screenshots/mobile-view.png" alt="Mobile View" width="300"><br>
+        <strong>📱 Mobile View</strong>
+      </td>
+    </tr>
+  </table>
+</div>
+
 ## 🌟 Features
 
 - 🎯 **Real-time Face Recognition** - Instant face detection and matching
@@ -26,7 +63,8 @@ Experience the Face ID Login system in action:
 
 ## 📋 Table of Contents
 
-- [🛠️ Installation](#️-installation)
+- [� Screenshots](#-screenshots)
+- [�🛠️ Installation](#️-installation)
 - [🏃‍♂️ Quick Start](#️-quick-start)
 - [📱 Usage](#-usage)
 - [🌐 Deployment](#-deployment)
@@ -259,6 +297,14 @@ We welcome contributions! Please follow these steps:
 - Add docstrings for new functions
 - Test on multiple browsers
 - Update documentation
+
+### 📸 Adding Screenshots
+To contribute screenshots:
+1. Run the app locally: `python app.py`
+2. Take screenshots of key features (1200x800px recommended)
+3. Save in `screenshots/` folder with descriptive names
+4. Update README if adding new features
+5. Submit with your PR
 
 ## 🐛 Troubleshooting
 
