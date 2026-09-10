@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 import cv2
 import numpy as np
 import os
@@ -163,6 +163,21 @@ def login_required(f):
 
 @app.route('/')
 def landing():
+    frontend_dist = os.path.join(os.path.dirname(__file__), 'frontend', 'dist')
+    if os.path.isfile(os.path.join(frontend_dist, 'index.html')):
+        return send_from_directory(frontend_dist, 'index.html')
+    return redirect(url_for('portfolio'))
+
+@app.route('/assets/<path:filename>')
+def frontend_asset(filename):
+    frontend_assets = os.path.join(os.path.dirname(__file__), 'frontend', 'dist', 'assets')
+    return send_from_directory(frontend_assets, filename)
+
+@app.route('/<filename>')
+def frontend_media(filename):
+    if filename in {'profile.jpg', 'hero-video.mp4', 'design-image.jpg'}:
+        frontend_dist = os.path.join(os.path.dirname(__file__), 'frontend', 'dist')
+        return send_from_directory(frontend_dist, filename)
     return redirect(url_for('portfolio'))
     '''
     <!DOCTYPE html>
