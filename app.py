@@ -7,6 +7,7 @@ import io
 import base64
 import pickle
 import secrets
+from html import escape
 from functools import wraps
 from flask import redirect, url_for
 from datetime import datetime
@@ -161,6 +162,100 @@ def login_required(f):
     return decorated_function
 
 @app.route('/')
+def landing():
+    return redirect(url_for('portfolio'))
+    '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Face ID / Portfolio</title>
+        <style>
+            :root { --ink: #081014; --paper: #edf1e8; --lime: #c8f169; --orange: #ff744d; --muted: #9daaa4; --line: rgba(237,241,232,.14); }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            html { scroll-behavior: smooth; }
+            body { background: var(--ink); color: var(--paper); font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; overflow-x: hidden; opacity: 0; animation: pageIn 1s .1s forwards; }
+            body::after { content: ''; position: fixed; inset: 0; z-index: 20; pointer-events: none; background: var(--ink); animation: curtainUp 1.1s cubic-bezier(.76,0,.24,1) forwards; }
+            @keyframes pageIn { to { opacity: 1; } }
+            @keyframes curtainUp { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
+            body::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .16; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 52px 52px; mask-image: linear-gradient(to bottom, black, transparent 78%); }
+            .shell { width: min(1180px, calc(100% - 40px)); margin: auto; position: relative; }
+            nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+            .brand { font-weight: 800; letter-spacing: 2px; font-size: .78rem; }
+            .brand i { display: inline-block; width: 9px; height: 9px; background: var(--lime); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 16px var(--lime); }
+            nav a { color: var(--muted); font-size: .78rem; text-decoration: none; margin-left: 1.4rem; }
+            nav a:hover { color: var(--lime); }
+            .hero { min-height: 78vh; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 4rem; padding: 5rem 0; }
+            .hero-media { position: absolute; inset: 0; z-index: -1; overflow: hidden; opacity: .25; pointer-events: none; }
+            .hero-media video { width: 100%; height: 100%; object-fit: cover; filter: saturate(.65) contrast(1.1); }
+            .hero-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--ink) 5%, rgba(8,16,20,.78) 48%, rgba(8,16,20,.35)), linear-gradient(0deg, var(--ink), transparent 45%, var(--ink)); }
+            .developer-tag { display: inline-flex; align-items: center; gap: .5rem; color: var(--muted); border: 1px solid var(--line); padding: .45rem .7rem; border-radius: 999px; font: .7rem Consolas, monospace; margin-bottom: 1.2rem; animation: blink 2.4s ease-in-out infinite; }
+            .developer-tag b { color: var(--lime); font-weight: 400; }
+            @keyframes blink { 50% { border-color: rgba(200,241,105,.55); box-shadow: 0 0 22px rgba(200,241,105,.08); } }
+            .kicker { color: var(--lime); text-transform: uppercase; letter-spacing: 3px; font-size: .7rem; margin-bottom: 1.4rem; }
+            h1 { font-size: clamp(3.8rem, 9vw, 8.8rem); line-height: .86; letter-spacing: -6px; max-width: 760px; }
+            h1 em { color: var(--lime); font-style: normal; }
+            .copy { color: var(--muted); max-width: 490px; margin: 2rem 0; font-size: 1.04rem; }
+            .actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+            .primary { background: var(--lime); color: var(--ink); padding: .9rem 1.2rem; border-radius: 999px; font-weight: 800; font-size: .78rem; text-decoration: none; transition: transform .25s, box-shadow .25s; }
+            .primary:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(200,241,105,.24); }
+            .hint { color: var(--muted); font-size: .72rem; }
+            .visual { aspect-ratio: 1; max-width: 390px; margin-left: auto; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; position: relative; background: radial-gradient(circle, rgba(200,241,105,.18), transparent 47%), #101e1d; box-shadow: 0 0 100px rgba(200,241,105,.08); animation: float 5s ease-in-out infinite; transition: transform .2s ease-out; overflow: hidden; }
+            .profile-photo { width: 82%; height: 82%; object-fit: cover; border-radius: 50%; border: 4px solid rgba(237,241,232,.75); box-shadow: 0 0 35px rgba(200,241,105,.35); position: relative; z-index: 1; filter: saturate(.9) contrast(1.05); }
+            .visual.has-photo::before, .visual.has-photo::after { z-index: 2; pointer-events: none; }
+            .visual::before, .visual::after { content: ''; position: absolute; inset: 13%; border: 1px solid rgba(200,241,105,.25); border-radius: 50%; animation: orbit 12s linear infinite; }
+            .visual::after { inset: 28%; border-color: rgba(255,116,77,.4); animation-direction: reverse; animation-duration: 8s; }
+            .core { width: 30%; aspect-ratio: 1; border-radius: 50%; background: var(--lime); box-shadow: 0 0 50px var(--lime); animation: corePulse 2.4s ease-in-out infinite; }
+            .visual-label { position: absolute; right: -12%; top: 28%; color: var(--lime); font-size: .65rem; letter-spacing: 2px; }
+            @keyframes float { 50% { transform: translateY(-12px) rotate(3deg); } }
+            @keyframes orbit { to { transform: rotate(360deg); } }
+            @keyframes corePulse { 50% { transform: scale(1.12); box-shadow: 0 0 75px var(--lime); } }
+            .preview { border-top: 1px solid var(--line); padding: 4rem 0 6rem; }
+            .preview-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 1.5rem; }
+            .preview h2 { font-size: clamp(2rem, 5vw, 4rem); line-height: .95; letter-spacing: -2px; }
+            .preview-head p { color: var(--muted); max-width: 280px; font-size: .8rem; }
+            .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+            .card { min-height: 230px; padding: 1.3rem; border: 1px solid var(--line); background: #10191b; display: flex; flex-direction: column; justify-content: space-between; transition: transform .3s, border-color .3s; }
+            .card { animation: cardIn .8s both; transform-style: preserve-3d; }
+            .card:nth-child(2) { animation-delay: .12s; }
+            .card:nth-child(3) { animation-delay: .24s; }
+            .card:hover { transform: translateY(-6px) rotate(-1deg); border-color: var(--lime); }
+            @keyframes cardIn { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+            .art { height: 82px; background: repeating-linear-gradient(135deg, transparent 0 14px, rgba(200,241,105,.2) 15px 16px); }
+            .card:nth-child(2) .art { background: radial-gradient(circle at 70% 30%, var(--orange), transparent 11%), repeating-radial-gradient(circle, transparent 0 17px, rgba(255,116,77,.25) 18px 19px); }
+            .card:nth-child(3) .art { background: linear-gradient(120deg, transparent 45%, rgba(141,243,255,.35) 46% 54%, transparent 55%), #172128; }
+            .card.image-card { padding: 0; overflow: hidden; }
+            .card.image-card .art { height: 100%; min-height: 230px; margin: 0; background: none; }
+            .card.image-card img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.8) contrast(1.05); transition: transform .6s, filter .6s; }
+            .card.image-card:hover img { transform: scale(1.08); filter: saturate(1.05) contrast(1.08); }
+            .card.image-card .image-caption { position: absolute; align-self: flex-start; margin: 1.3rem; padding: .45rem .7rem; background: rgba(8,16,20,.75); border: 1px solid rgba(237,241,232,.2); border-radius: 999px; color: var(--lime); font-size: .68rem; letter-spacing: 1px; }
+            .tag { color: var(--muted); font-size: .68rem; letter-spacing: 1px; text-transform: uppercase; }
+            .card h3 { margin-top: .8rem; font-size: 1.25rem; }
+            footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: .72rem; display: flex; justify-content: space-between; }
+            .scroll-line { position: fixed; z-index: 5; top: 0; left: 0; height: 3px; width: 0; background: var(--lime); box-shadow: 0 0 14px var(--lime); }
+            @media (max-width: 700px) { .shell { width: min(100% - 28px, 1180px); } nav a { display: none; } .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 4rem 0; } h1 { letter-spacing: -3px; } .visual { width: 72vw; margin: auto; } .cards { grid-template-columns: 1fr; } footer { display: block; } footer span { display: block; margin-top: .5rem; } }
+        </style>
+    </head>
+    <body>
+        <div class="scroll-line" id="scrollLine"></div><main class="shell">
+            <nav><a class="brand" href="/"><i></i> GOBINDA KUMAR SAHANI</a><div><a href="#work">Work</a><a href="#about">About</a><a href="https://github.com/Gobinda988888" target="_blank" rel="noopener">GitHub</a><a href="/login">Face login</a></div></nav>
+            <section class="hero" id="about"><div class="hero-media"><video autoplay muted loop playsinline poster="/static/profile.jpg"><source src="/static/hero-video.mp4" type="video/mp4"></video></div><div><div class="developer-tag"><b>~/gobinda-kumar-sahani</b> developer_mode: true</div><div class="kicker">Developer / Designer / Builder</div><h1>Ideas with a <em>pulse.</em></h1><p class="copy">I am Gobinda Kumar Sahani, a developer who turns sharp ideas into useful, memorable digital experiences. Explore the preview, then unlock the full portfolio with Face ID.</p><div class="actions"><a class="primary" href="/login">Enter with Face ID</a><a class="hint" href="https://github.com/Gobinda988888" target="_blank" rel="noopener">View GitHub ↗</a></div></div><div class="visual has-photo"><img class="profile-photo" src="/static/profile.jpg" alt="Gobinda Kumar Sahani" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><div class="core" style="display:none"></div><span class="visual-label">BUILD / 01</span></div></section>
+            <section class="preview" id="work"><div class="preview-head"><h2>Selected<br>signals.</h2><p>A small preview of the work inside. The complete collection opens after verification.</p></div><div class="cards"><article class="card"><div class="art"></div><div><span class="tag">01 / Product</span><h3>Northstar OS</h3></div></article><article class="card"><div class="art"></div><div><span class="tag">02 / Identity</span><h3>Afterglow</h3></div></article><article class="card image-card"><span class="image-caption">03 / CREATIVE DIRECTION</span><div class="art"><img src="/static/design-image.jpg" alt="Gobinda Kumar Sahani creative work"></div></article></div></section>
+            <footer><span>Built by Gobinda Kumar Sahani.</span><span><a href="https://github.com/Gobinda988888" target="_blank" rel="noopener">GitHub / Gobinda988888 ↗</a> · Face ID protected / 2026</span></footer>
+        </main>
+        <script>
+            const scrollLine = document.getElementById('scrollLine');
+            const visual = document.querySelector('.visual');
+            window.addEventListener('scroll', () => { const max = document.documentElement.scrollHeight - innerHeight; scrollLine.style.width = `${(scrollY / max) * 100}%`; }, { passive: true });
+            visual.addEventListener('pointermove', (event) => { const rect = visual.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width - .5; const y = (event.clientY - rect.top) / rect.height - .5; visual.style.transform = `perspective(800px) rotateY(${x * 10}deg) rotateX(${y * -10}deg) translateY(-8px)`; });
+            visual.addEventListener('pointerleave', () => { visual.style.transform = ''; });
+        </script>
+    </body>
+    </html>
+    '''
+
+@app.route('/login')
 def home():
     return '''
     <!DOCTYPE html>
@@ -706,7 +801,7 @@ def home():
                     
                     if (result.success) {
                         showMessage(result.message, 'success');
-                        setTimeout(() => window.location.href = '/demo', 2000);
+                        setTimeout(() => window.location.href = '/portfolio', 1200);
                     } else {
                         showMessage(result.message, 'error');
                     }
@@ -1171,6 +1266,137 @@ def demo():
                     window.location.href = '/';
                 }}
             }}
+        </script>
+    </body>
+    </html>
+    '''
+
+@app.route('/portfolio')
+def portfolio():
+    is_authenticated = bool(session.get('user'))
+    user_name = escape(str(session.get('user', 'Public visitor')))
+    login_time = datetime.now().strftime('%b %d, %Y / %I:%M %p')
+    access_label = 'Private portfolio / Face verified' if is_authenticated else 'Public portfolio / Welcome'
+    access_copy = 'A private portfolio for a curious maker who turns sharp ideas into useful, memorable digital experiences.' if is_authenticated else 'A public portfolio for a curious maker who turns sharp ideas into useful, memorable digital experiences.'
+    access_action = '<button class="logout" onclick="logout()">Sign out</button>' if is_authenticated else '<a class="logout" href="/login">Face login</a>'
+    return f'''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{user_name} / Portfolio</title>
+        <style>
+            :root {{
+                --ink: #081014;
+                --paper: #edf1e8;
+                --lime: #c8f169;
+                --orange: #ff744d;
+                --muted: #9daaa4;
+                --line: rgba(237,241,232,.14);
+            }}
+            * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+            html {{ scroll-behavior: smooth; }}
+            body {{ background: var(--ink); color: var(--paper); font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; line-height: 1.5; overflow-x: hidden; opacity: 0; animation: pageIn 1s .1s forwards; }}
+            body::after {{ content: ''; position: fixed; inset: 0; z-index: 20; pointer-events: none; background: var(--ink); animation: curtainUp 1.1s cubic-bezier(.76,0,.24,1) forwards; }}
+            @keyframes pageIn {{ to {{ opacity: 1; }} }}
+            @keyframes curtainUp {{ 0% {{ transform: translateY(0); }} 100% {{ transform: translateY(-100%); }} }}
+            body::before {{ content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .17; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 52px 52px; mask-image: linear-gradient(to bottom, black, transparent 75%); }}
+            a {{ color: inherit; text-decoration: none; }}
+            .shell {{ width: min(1180px, calc(100% - 40px)); margin: auto; position: relative; }}
+            nav {{ display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }}
+            .brand {{ font-weight: 800; letter-spacing: 2px; font-size: .78rem; }}
+            .brand i {{ display: inline-block; width: 9px; height: 9px; background: var(--lime); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 16px var(--lime); }}
+            .nav-links {{ display: flex; gap: 1.5rem; color: var(--muted); font-size: .78rem; }}
+            .nav-links a:hover {{ color: var(--lime); }}
+            .logout {{ border: 1px solid var(--line); background: transparent; color: var(--paper); border-radius: 999px; padding: .55rem .9rem; cursor: pointer; font: inherit; font-size: .72rem; }}
+            .logout:hover {{ border-color: var(--lime); color: var(--lime); }}
+            .hero {{ min-height: 72vh; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 4rem; padding: 5rem 0 4rem; }}
+            .hero-media {{ position: absolute; inset: 0; z-index: -1; overflow: hidden; opacity: .2; pointer-events: none; }}
+            .hero-media video {{ width: 100%; height: 100%; object-fit: cover; filter: saturate(.65) contrast(1.1); }}
+            .hero-media::after {{ content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--ink) 5%, rgba(8,16,20,.78) 48%, rgba(8,16,20,.35)), linear-gradient(0deg, var(--ink), transparent 45%, var(--ink)); }}
+            .kicker {{ color: var(--lime); text-transform: uppercase; letter-spacing: 3px; font-size: .7rem; margin-bottom: 1.4rem; }}
+            .developer-tag {{ display: inline-flex; gap: .5rem; color: var(--muted); border: 1px solid var(--line); padding: .45rem .7rem; border-radius: 999px; font: .7rem Consolas, monospace; margin-bottom: 1.2rem; animation: blink 2.4s ease-in-out infinite; }}
+            .developer-tag b {{ color: var(--lime); font-weight: 400; }}
+            @keyframes blink {{ 50% {{ border-color: rgba(200,241,105,.55); box-shadow: 0 0 22px rgba(200,241,105,.08); }} }}
+            h1 {{ font-size: clamp(3.6rem, 9vw, 8.5rem); line-height: .86; letter-spacing: -6px; max-width: 750px; }}
+            h1 em {{ color: var(--lime); font-style: normal; }}
+            .hero-copy {{ color: var(--muted); max-width: 480px; margin-top: 2rem; font-size: 1.05rem; }}
+            .hero-meta {{ display: flex; gap: 2rem; margin-top: 2.2rem; color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; }}
+            .hero-meta strong {{ display: block; color: var(--paper); font-size: 1rem; margin-bottom: .2rem; }}
+            .orbit {{ aspect-ratio: 1; max-width: 390px; margin-left: auto; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; position: relative; background: radial-gradient(circle, rgba(200,241,105,.18), transparent 48%), #101e1d; box-shadow: 0 0 100px rgba(200,241,105,.08); animation: float 5s ease-in-out infinite; transition: transform .2s ease-out; }}
+            .profile-photo {{ width: 82%; height: 82%; object-fit: cover; border-radius: 50%; border: 4px solid rgba(237,241,232,.75); box-shadow: 0 0 35px rgba(200,241,105,.35); position: relative; z-index: 1; filter: saturate(.9) contrast(1.05); }}
+            .orbit::before, .orbit::after {{ content: ''; position: absolute; inset: 13%; border: 1px solid rgba(200,241,105,.25); border-radius: 50%; animation: orbitSpin 12s linear infinite; }}
+            .orbit::after {{ inset: 28%; border-color: rgba(255,116,77,.4); animation-direction: reverse; animation-duration: 8s; }}
+            .orbit-core {{ width: 30%; aspect-ratio: 1; border-radius: 50%; background: var(--lime); box-shadow: 0 0 50px var(--lime); position: relative; animation: corePulse 2.4s ease-in-out infinite; }}
+            .orbit-core::after {{ content: 'FACE VERIFIED'; position: absolute; left: 130%; top: 25%; color: var(--lime); font-size: .65rem; line-height: 1.5; letter-spacing: 2px; width: 120px; }}
+            @keyframes float {{ 50% {{ transform: translateY(-12px) rotate(3deg); }} }}
+            @keyframes orbitSpin {{ to {{ transform: rotate(360deg); }} }}
+            @keyframes corePulse {{ 50% {{ transform: scale(1.12); box-shadow: 0 0 75px var(--lime); }} }}
+            .section {{ padding: 5rem 0; border-top: 1px solid var(--line); }}
+            .section-head {{ display: flex; justify-content: space-between; align-items: end; margin-bottom: 2rem; }}
+            .section-head h2 {{ font-size: clamp(2rem, 5vw, 4rem); line-height: .95; letter-spacing: -2px; }}
+            .section-head p {{ color: var(--muted); max-width: 300px; font-size: .82rem; }}
+            .work-grid {{ display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; }}
+            .work-card {{ min-height: 300px; padding: 1.5rem; border: 1px solid var(--line); background: #10191b; display: flex; flex-direction: column; justify-content: space-between; transition: transform .3s, border-color .3s; }}
+            .work-card {{ animation: cardIn .8s both; }}
+            .work-card:nth-child(2) {{ animation-delay: .12s; }}
+            .work-card:nth-child(3) {{ animation-delay: .24s; }}
+            .work-card:nth-child(4) {{ animation-delay: .36s; }}
+            .work-card:hover {{ transform: translateY(-7px) rotate(-1deg); border-color: var(--lime); }}
+            @keyframes cardIn {{ from {{ opacity: 0; transform: translateY(22px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+            .work-card:nth-child(1) {{ grid-column: span 7; background: linear-gradient(135deg, #1e3329, #10191b 65%); }}
+            .work-card:nth-child(2) {{ grid-column: span 5; background: linear-gradient(135deg, #33231e, #10191b 65%); }}
+            .work-card:nth-child(3) {{ grid-column: span 5; }}
+            .work-card:nth-child(4) {{ grid-column: span 7; background: linear-gradient(135deg, #202637, #10191b 65%); }}
+            .card-top {{ display: flex; justify-content: space-between; color: var(--muted); font-size: .7rem; letter-spacing: 1px; }}
+            .card-art {{ height: 95px; margin: 1rem 0; border: 1px solid rgba(255,255,255,.14); background: repeating-linear-gradient(135deg, transparent 0 14px, rgba(200,241,105,.18) 15px 16px); }}
+            .project-image {{ background: linear-gradient(rgba(8,16,20,.05), rgba(8,16,20,.2)), url('/static/design-image.jpg') center / cover; filter: saturate(.85); }}
+            .work-card:nth-child(2) .card-art {{ background: radial-gradient(circle at 70% 30%, var(--orange), transparent 10%), repeating-radial-gradient(circle, transparent 0 17px, rgba(255,116,77,.25) 18px 19px); }}
+            .card-title {{ font-size: 1.5rem; margin-bottom: .3rem; }}
+            .card-desc {{ color: var(--muted); font-size: .78rem; }}
+            .about-grid {{ display: grid; grid-template-columns: .8fr 1.2fr; gap: 4rem; }}
+            .about-grid h3 {{ font-size: 2rem; max-width: 360px; line-height: 1.05; }}
+            .about-grid p {{ color: var(--muted); max-width: 590px; margin-bottom: 1rem; }}
+            .chips {{ display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.5rem; }}
+            .chip {{ border: 1px solid var(--line); padding: .45rem .7rem; border-radius: 999px; color: var(--lime); font-size: .7rem; }}
+            footer {{ border-top: 1px solid var(--line); padding: 2rem 0 3rem; display: flex; justify-content: space-between; color: var(--muted); font-size: .72rem; }}
+            .scroll-line {{ position: fixed; z-index: 5; top: 0; left: 0; height: 3px; width: 0; background: var(--lime); box-shadow: 0 0 14px var(--lime); }}
+            .reveal {{ opacity: 0; transform: translateY(18px); transition: opacity .7s, transform .7s; }}
+            .reveal.show {{ opacity: 1; transform: translateY(0); }}
+            @media (max-width: 700px) {{ .shell {{ width: min(100% - 28px, 1180px); }} .nav-links {{ display: none; }} .hero {{ grid-template-columns: 1fr; gap: 2.5rem; padding: 4rem 0 3rem; }} h1 {{ letter-spacing: -3px; }} .orbit {{ width: 70vw; margin: auto; }} .work-card:nth-child(n) {{ grid-column: span 12; min-height: 260px; }} .about-grid {{ grid-template-columns: 1fr; gap: 1.5rem; }} footer {{ display: block; }} footer span {{ display: block; margin-top: .5rem; }} }}
+        </style>
+    </head>
+    <body>
+        <div class="scroll-line" id="scrollLine"></div><main class="shell">
+            <nav>
+                <a class="brand" href="#top"><i></i> {user_name.upper()} / PORTFOLIO</a>
+                <div class="nav-links"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></div>
+                {access_action}
+            </nav>
+            <section class="hero" id="top">
+                <div class="hero-media"><video autoplay muted loop playsinline poster="/static/profile.jpg"><source src="/static/hero-video.mp4" type="video/mp4"></video></div>
+                <div class="reveal"><div class="developer-tag"><b>~/gobinda-kumar-sahani</b> developer_mode: true</div><div class="kicker">{access_label}</div><h1>Ideas with a <em>pulse.</em></h1><p class="hero-copy">{access_copy}</p><div class="hero-meta"><div><strong>{user_name}</strong>{'Signed in user' if is_authenticated else 'Visiting now'}</div><div><strong>{login_time}</strong>Current session</div></div></div>
+                <div class="orbit reveal"><img class="profile-photo" src="/static/profile.jpg" alt="Gobinda Kumar Sahani" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><div class="orbit-core" style="display:none"></div></div>
+            </section>
+            <section class="section reveal" id="work"><div class="section-head"><h2>Selected<br>signals.</h2><p>A few things I have been shaping across design, code and the spaces between them.</p></div><div class="work-grid">
+                <article class="work-card"><div class="card-top"><span>01 / PRODUCT</span><span>2026</span></div><div class="card-art"></div><div><h3 class="card-title">Northstar OS</h3><p class="card-desc">A calmer command center for teams moving fast.</p></div></article>
+                <article class="work-card"><div class="card-top"><span>02 / IDENTITY</span><span>2025</span></div><div class="card-art"></div><div><h3 class="card-title">Afterglow</h3><p class="card-desc">A visual language for late-night creators.</p></div></article>
+                <article class="work-card"><div class="card-top"><span>03 / WEB</span><span>2025</span></div><div class="card-art"></div><div><h3 class="card-title">Field Notes</h3><p class="card-desc">Editorial tools for people who notice details.</p></div></article>
+                <article class="work-card"><div class="card-top"><span>04 / CREATIVE</span><span>2026</span></div><div class="card-art project-image"></div><div><h3 class="card-title">Human / Machine</h3><p class="card-desc">Exploring warmer interfaces for intelligent systems.</p></div></article>
+            </div></section>
+            <section class="section about-grid reveal" id="about"><h3>Good work should feel obvious in hindsight.</h3><div><p>I am Gobinda Kumar Sahani, a developer who builds digital products with a bias toward clarity, character and momentum.</p><p>This portfolio is unlocked with face verification, so the work starts with a little trust.</p><div class="chips"><span class="chip">Python / Flask</span><span class="chip">Frontend craft</span><span class="chip">Motion systems</span><span class="chip">Face ID</span></div></div></section>
+            <footer id="contact"><span>Available for thoughtful collaborations.</span><span><a href="https://github.com/Gobinda988888" target="_blank" rel="noopener">GitHub / Gobinda988888 ↗</a> · Built with intent / {datetime.now().year}</span></footer>
+        </main>
+        <script>
+            const observer = new IntersectionObserver((entries) => entries.forEach(entry => {{ if (entry.isIntersecting) entry.target.classList.add('show'); }}), {{ threshold: .12 }});
+            document.querySelectorAll('.reveal').forEach(item => observer.observe(item));
+            const scrollLine = document.getElementById('scrollLine');
+            const orbit = document.querySelector('.orbit');
+            window.addEventListener('scroll', () => {{ const max = document.documentElement.scrollHeight - innerHeight; scrollLine.style.width = `${{(scrollY / max) * 100}}%`; }}, {{ passive: true }});
+            orbit.addEventListener('pointermove', (event) => {{ const rect = orbit.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width - .5; const y = (event.clientY - rect.top) / rect.height - .5; orbit.style.transform = `perspective(800px) rotateY(${{x * 10}}deg) rotateX(${{y * -10}}deg) translateY(-8px)`; }});
+            orbit.addEventListener('pointerleave', () => {{ orbit.style.transform = ''; }});
+            async function logout() {{ try {{ await fetch('/logout', {{ method: 'POST' }}); }} finally {{ window.location.href = '/'; }} }}
         </script>
     </body>
     </html>
