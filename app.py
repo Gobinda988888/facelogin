@@ -175,13 +175,30 @@ def home():
                 padding: 0;
                 box-sizing: border-box;
             }
+            :root {
+                --ink: #07121b;
+                --panel: rgba(10, 25, 34, 0.78);
+                --line: rgba(157, 239, 255, 0.18);
+                --cyan: #8df3ff;
+                --blue: #55a7ff;
+                --muted: #91a8b5;
+            }
             body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+                background: var(--ink);
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
                 color: white;
+                overflow-x: hidden;
+            }
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background: radial-gradient(circle at 12% 15%, rgba(52, 175, 255, .18), transparent 28%), radial-gradient(circle at 90% 82%, rgba(42, 255, 207, .11), transparent 25%), linear-gradient(120deg, transparent 0 48%, rgba(255,255,255,.025) 48% 49%, transparent 49%);
+                background-size: auto, auto, 7px 7px;
             }
             .container {
                 flex: 1;
@@ -189,34 +206,75 @@ def home():
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                padding: 2rem;
+                padding: 3rem 1.25rem;
                 text-align: center;
+                position: relative;
+                animation: rise .8s ease both;
             }
+            @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
             .title {
-                font-size: 3rem;
-                margin-bottom: 0.5rem;
-                font-weight: 300;
+                font-size: clamp(2.5rem, 7vw, 5.8rem);
+                letter-spacing: -2px;
+                margin-bottom: .4rem;
+                font-weight: 700;
+                line-height: .95;
+                text-shadow: 0 0 30px rgba(141, 243, 255, .25);
             }
             .subtitle {
-                font-size: 1.2rem;
-                margin-bottom: 3rem;
-                opacity: 0.9;
+                color: var(--muted);
+                font-size: .9rem;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                margin-bottom: 2rem;
+            }
+            .eyebrow {
+                color: var(--cyan);
+                font-size: .72rem;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                margin-bottom: .8rem;
             }
             .camera-container {
                 position: relative;
-                width: 320px;
-                height: 320px;
-                border: 3px solid rgba(255, 255, 255, 0.3);
-                border-radius: 20px;
+                width: min(86vw, 470px);
+                aspect-ratio: 4 / 3;
+                border: 1px solid var(--line);
+                border-radius: 22px;
                 overflow: hidden;
-                margin-bottom: 2rem;
-                background: rgba(0, 0, 0, 0.2);
+                margin-bottom: 1rem;
+                background: linear-gradient(145deg, rgba(40, 93, 112, .25), rgba(2, 11, 17, .9));
+                box-shadow: 0 25px 80px rgba(0, 0, 0, .4), inset 0 0 0 1px rgba(255,255,255,.04);
             }
+            .camera-container::before, .camera-container::after {
+                content: '';
+                position: absolute;
+                z-index: 2;
+                width: 42px;
+                height: 42px;
+                border: 2px solid var(--cyan);
+                opacity: .8;
+            }
+            .camera-container::before { top: 18px; left: 18px; border-right: 0; border-bottom: 0; }
+            .camera-container::after { right: 18px; bottom: 18px; border-left: 0; border-top: 0; }
+            .scan-line {
+                position: absolute;
+                z-index: 3;
+                left: 8%;
+                right: 8%;
+                height: 2px;
+                top: 20%;
+                background: var(--cyan);
+                box-shadow: 0 0 18px 4px rgba(141,243,255,.65);
+                opacity: 0;
+            }
+            .camera-container.active .scan-line { opacity: 1; animation: scan 2.8s ease-in-out infinite; }
+            @keyframes scan { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(220px); } }
             #video {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 display: none;
+                filter: saturate(.85) contrast(1.08);
             }
             #canvas {
                 display: none;
@@ -225,42 +283,79 @@ def home():
                 width: 100%;
                 height: 100%;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                font-size: 1.1rem;
-                color: rgba(255, 255, 255, 0.7);
+                gap: .65rem;
+                font-size: .9rem;
+                color: var(--muted);
+            }
+            .camera-placeholder::before {
+                content: '◉';
+                color: var(--cyan);
+                font-size: 2.2rem;
+                animation: pulse 1.8s ease-in-out infinite;
+            }
+            @keyframes pulse { 50% { opacity: .35; transform: scale(.86); } }
+            .status-row {
+                width: min(86vw, 470px);
+                display: flex;
+                justify-content: space-between;
+                color: var(--muted);
+                font-size: .72rem;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 1.4rem;
+            }
+            .status-row span:first-child::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #61727b; margin-right: 7px; }
+            .camera-container.active + .status-row span:first-child::before { background: #4dffc1; box-shadow: 0 0 10px #4dffc1; }
+            .mode-switch {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                width: min(86vw, 470px);
+                padding: 4px;
+                gap: 4px;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                background: rgba(255,255,255,.04);
+                margin-bottom: 1rem;
             }
             .buttons {
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
-                width: 100%;
-                max-width: 320px;
+                width: min(86vw, 470px);
             }
             .btn {
-                padding: 1rem 2rem;
+                padding: .95rem 1.2rem;
                 border: none;
-                border-radius: 50px;
-                font-size: 1.1rem;
+                border-radius: 11px;
+                font-size: .86rem;
                 font-weight: 600;
                 cursor: pointer;
-                transition: all 0.3s;
+                transition: transform .25s, box-shadow .25s, background .25s;
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                letter-spacing: 1.5px;
             }
             .btn-primary {
-                background: #4facfe;
+                background: linear-gradient(100deg, #70e7ff, #4e96ff);
+                box-shadow: 0 12px 28px rgba(63, 165, 255, .2);
                 color: white;
             }
             .btn-primary:hover:not(:disabled) {
-                background: #00c9ff;
-                transform: translateY(-2px);
-                box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+                transform: translateY(-3px);
+                box-shadow: 0 16px 32px rgba(63, 165, 255, .35);
             }
             .btn-secondary {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255,255,255,.04);
+                color: var(--muted);
+                border: 1px solid var(--line);
+            }
+            .mode-switch .btn { border: 0; padding: .7rem; }
+            .mode-switch .btn.active, .btn-secondary:hover:not(:disabled) {
                 color: white;
-                border: 2px solid rgba(255, 255, 255, 0.3);
+                background: rgba(141, 243, 255, .13);
+                border-color: rgba(141,243,255,.4);
             }
             .btn:disabled {
                 opacity: 0.5;
@@ -271,22 +366,25 @@ def home():
             }
             .input-group input {
                 width: 100%;
-                padding: 1rem;
-                border: none;
-                border-radius: 25px;
+                padding: 1rem 1.1rem;
+                border: 1px solid var(--line);
+                border-radius: 11px;
                 font-size: 1rem;
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.06);
                 color: white;
+                outline: none;
+                transition: border .2s, box-shadow .2s;
             }
-            .input-group input::placeholder {
-                color: rgba(255, 255, 255, 0.7);
-            }
+            .input-group input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(141,243,255,.1); }
             .message {
+                width: min(86vw, 470px);
                 margin-top: 1rem;
-                padding: 1rem;
+                padding: .9rem 1rem;
                 border-radius: 10px;
+                font-size: .86rem;
                 font-weight: 500;
             }
+            .input-group input::placeholder { color: #718791; }
             .message.success {
                 background: rgba(46, 204, 113, 0.2);
                 border: 1px solid #2ecc71;
@@ -300,25 +398,48 @@ def home():
             .hidden {
                 display: none !important;
             }
+            .loading-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 10;
+                display: grid;
+                place-items: center;
+                background: rgba(3, 11, 16, .76);
+                backdrop-filter: blur(12px);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .25s;
+            }
+            .loading-overlay.visible { opacity: 1; pointer-events: auto; }
+            .loading-card { width: min(88vw, 340px); padding: 2rem; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); text-align: left; box-shadow: 0 24px 70px rgba(0,0,0,.45); }
+            .loader-ring { width: 48px; height: 48px; border: 2px solid rgba(141,243,255,.18); border-top-color: var(--cyan); border-right-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 1.2rem; }
+            @keyframes spin { to { transform: rotate(360deg); } }
+            .loading-card h2 { font-size: 1.15rem; margin-bottom: .4rem; }
+            .loading-card p { color: var(--muted); font-size: .82rem; margin-bottom: 1.2rem; }
+            .loading-steps { display: grid; gap: .55rem; color: #607780; font-size: .75rem; }
+            .loading-steps span::before { content: '○'; display: inline-block; width: 20px; color: #607780; }
+            .loading-steps span.active { color: var(--cyan); }
+            .loading-steps span.active::before { content: '●'; color: var(--cyan); }
             @media (max-width: 768px) {
-                .title { font-size: 2rem; }
-                .camera-container { width: 280px; height: 280px; }
                 .container { padding: 1rem; }
             }
         </style>
     </head>
     <body>
         <div class="container">
+            <div class="eyebrow">Secure identity gateway / 01</div>
             <h1 class="title">Face ID</h1>
             <p class="subtitle">Unlock with a look. It's that simple.</p>
 
-            <div class="camera-container">
+            <div class="camera-container" id="cameraFrame">
                 <video id="video" autoplay muted playsinline></video>
                 <canvas id="canvas"></canvas>
+                <div class="scan-line"></div>
                 <div class="camera-placeholder" id="placeholder">
-                    Click "Start Camera" to begin
+                    <span>Camera is standing by</span>
                 </div>
             </div>
+            <div class="status-row"><span id="cameraStatus">Camera offline</span><span>Encrypted session</span></div>
 
             <div class="buttons">
                 <button class="btn btn-secondary" id="startCamera" onclick="startCamera()">
@@ -340,11 +461,25 @@ def home():
                     </button>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="showLogin()">Login Mode</button>
-                <button class="btn btn-secondary" onclick="showRegister()">Register Mode</button>
+                <div class="mode-switch">
+                    <button class="btn btn-secondary active" id="loginMode" onclick="showLogin()">Login Mode</button>
+                    <button class="btn btn-secondary" id="registerMode" onclick="showRegister()">Register Mode</button>
+                </div>
             </div>
 
             <div id="message"></div>
+        </div>
+        <div class="loading-overlay" id="loadingOverlay" aria-live="polite">
+            <div class="loading-card">
+                <div class="loader-ring"></div>
+                <h2 id="loadingTitle">Reading your face</h2>
+                <p id="loadingText">Matching your encrypted face signature...</p>
+                <div class="loading-steps">
+                    <span class="active" id="stepCapture">Capture image</span>
+                    <span id="stepDetect">Detect face landmarks</span>
+                    <span id="stepVerify">Verify identity</span>
+                </div>
+            </div>
         </div>
 
         <script>
@@ -360,16 +495,33 @@ def home():
                 setTimeout(() => messageDiv.classList.add('hidden'), 5000);
             }
 
+            function setLoading(isLoading, mode = 'login') {
+                const overlay = document.getElementById('loadingOverlay');
+                document.getElementById('loadingTitle').textContent = mode === 'register' ? 'Creating your Face ID' : 'Reading your face';
+                document.getElementById('loadingText').textContent = mode === 'register' ? 'Building your encrypted face signature...' : 'Matching your encrypted face signature...';
+                overlay.classList.toggle('visible', isLoading);
+                if (isLoading) {
+                    document.querySelectorAll('.loading-steps span').forEach(step => step.classList.remove('active'));
+                    document.getElementById('stepCapture').classList.add('active');
+                    setTimeout(() => document.getElementById('stepDetect').classList.add('active'), 450);
+                    setTimeout(() => document.getElementById('stepVerify').classList.add('active'), 1000);
+                }
+            }
+
             function showLogin() {
                 currentMode = 'login';
                 document.getElementById('loginSection').classList.remove('hidden');
                 document.getElementById('registerSection').classList.add('hidden');
+                document.getElementById('loginMode').classList.add('active');
+                document.getElementById('registerMode').classList.remove('active');
             }
 
             function showRegister() {
                 currentMode = 'register';
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('registerSection').classList.remove('hidden');
+                document.getElementById('loginMode').classList.remove('active');
+                document.getElementById('registerMode').classList.add('active');
             }
 
             async function startCamera() {
@@ -473,6 +625,8 @@ def home():
                         video.play().then(() => {
                             document.getElementById('placeholder').style.display = 'none';
                             video.style.display = 'block';
+                            document.getElementById('cameraFrame').classList.add('active');
+                            document.getElementById('cameraStatus').textContent = 'Camera online';
                             document.getElementById('startCamera').textContent = 'Camera Active';
                             document.getElementById('startCamera').disabled = true;
                             showLogin();
@@ -537,6 +691,7 @@ def home():
                 try {
                     document.getElementById('loginBtn').disabled = true;
                     document.getElementById('loginBtn').textContent = 'Processing...';
+                    setLoading(true, 'login');
                     
                     const imageData = captureImage();
                     if (!imageData) return;
@@ -558,6 +713,7 @@ def home():
                 } catch (error) {
                     showMessage('Login failed. Please try again.', 'error');
                 } finally {
+                    setLoading(false);
                     document.getElementById('loginBtn').disabled = false;
                     document.getElementById('loginBtn').textContent = 'Unlock';
                 }
@@ -573,6 +729,7 @@ def home():
 
                     document.getElementById('registerBtn').disabled = true;
                     document.getElementById('registerBtn').textContent = 'Processing...';
+                    setLoading(true, 'register');
                     
                     const imageData = captureImage();
                     if (!imageData) return;
@@ -595,6 +752,7 @@ def home():
                 } catch (error) {
                     showMessage('Registration failed. Please try again.', 'error');
                 } finally {
+                    setLoading(false);
                     document.getElementById('registerBtn').disabled = false;
                     document.getElementById('registerBtn').textContent = 'Set Up Face ID';
                 }
